@@ -1,0 +1,43 @@
+{% extends "encoder/base.html" %}
+{% block header %}
+        <table border="0" width="100%">
+        <tr>
+        <td><a href="/zencoder/"><h3>Home</h3></a></td>
+        <td><a href="/zencoder/jobs"><h3>Jobs</h3></a></td>
+        <td><a href="/zencoder/encode"><h3><u>Add Encoding Job</u></h3></a></td>
+        </tr>
+        </table>
+<hr>
+{% endblock %}
+{% block content %}
+<h3>
+Add Encoding Job
+</h3>
+<table border="1">
+<tr>
+<td align="center"><h4>File Name</h4></td>
+<td><h4>Size (MB)</h4></td>
+<td><h4><input type="checkbox" name="check-all" onClick="toggle(this)"/>Select All Files</h4></td>
+</tr>
+<form action="" method="post">
+{% csrf_token %}
+{% for file in files %}
+<tr>
+<td>{{file.file}}</td>
+<td>{{file.size}}</td>
+<td><input type="checkbox" name="files" value="{{file.file}}" /></td>
+</tr>
+{% endfor %}
+</table> 
+<input type="submit" value="Encode Selected Files >>" />
+</form>
+<script language="JavaScript">
+function toggle(source) {
+  checkboxes = document.getElementsByName('files');
+  for each(var checkbox in checkboxes)
+    checkbox.checked = source.checked;
+}
+</script>
+{% endblock %}
+</body>
+</html>

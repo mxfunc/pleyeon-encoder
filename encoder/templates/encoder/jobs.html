@@ -1,0 +1,59 @@
+{% extends "encoder/base.html" %}
+{% block header %}
+        <table border="0" width="100%">
+        <tr>
+        <td><a href="/zencoder/"><h3>Home</h3></a></td>
+        <td><a href="/zencoder/jobs"><h3><u>Jobs</u></h3></a></td>
+        <td><a href="/zencoder/encode"><h3>Add Encoding Job</h3></a></td>
+        </tr>
+        </table>
+<hr>
+{% endblock %}
+
+{% block content %}
+<table width="60%">
+<tr>
+<td>
+<a href="/zencoder/jobs?sort=date">Sort By Date</a>
+</td>
+<td>
+<a href="/zencoder/jobs?status=failed">Failed Jobs</a>
+</td>
+<td>
+<a href="/zencoder/jobs?status=finished">Finished Jobs</a>
+</td>
+<td>
+<a href="/zencoder/jobs?status=finished">Finished Jobs</a>
+</td>
+<td>
+<form action="/zencoder/jobs">
+<input type="hidden" name="zencoder" value="true">
+<input type="submit" value="Update via Zencoder">
+</form>
+</td>
+</tr>
+</table>
+<h3>Job Queue</h3>
+<table border="1">
+<tr>
+<td><h4>Zencoder Job ID</h4></td>
+<td><h4>Input File</h4></td>
+<td><h4>Job Status</h4></td>
+<td><h4>Creation Time</h4></td>
+<td><h4>Job Error</h4></td>
+<td><h4>Outputs</h4></td>
+</tr>
+{% for job in jobs %}
+<tr>
+<td><a href="#/zencoder/jobs/{{job.zencoder_id}}">{{job.zencoder_id}}<a></td>
+<td>{{job.file}}</td>
+<td>{{job.status}}</td>
+<td>{{job.created_at}}</td>
+<td>{{job.error}}</td>
+<td><ul>{% for output in job.outputs.all %}
+<li>{{output.label}}:{{output.zencoder_id}},{{output.status}},{{output.current}},{{output.progress}}</li>
+{% endfor %}
+</ul></tr>
+{% endfor %}
+</table> 
+{% endblock %}

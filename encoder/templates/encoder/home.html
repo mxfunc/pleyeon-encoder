@@ -1,0 +1,129 @@
+{% extends "encoder/base.html" %}
+{% block header %}
+        <table border="0" width="100%">
+        <tr>
+        <td><a href="/zencoder/"><h3><u>Home</u></h3></a></td>
+        <td><a href="/zencoder/jobs"><h3>Jobs</h3></a></td>
+        <td><a href="/zencoder/encode"><h3>Add Encoding Job</h3></a></td>
+        </tr>
+        </table>
+<hr>
+{% endblock %}
+
+{% block content %}
+<table border="0" width="100%">
+<tr>
+<td>
+<h3><u>Job Summary</u></h3>
+<table border="1">
+<colgroup>
+   <col span="1"  style="width: 70%;">
+   <col  span="1" align="center" style="width: 30%;">
+</colgroup>
+<tr>
+<td><h4>Total Jobs Submitted</h4></td>
+<td>{{num_jobs}}</td>
+</tr>
+<tr>
+<td><h4>Jobs Finished</h4></td>
+<td>{{num_jobs_finished}}</td>
+</tr>
+
+<tr>
+<td><h4>Jobs Failed</h4></td>
+<td>{{num_jobs_failed}}</td>
+</tr>
+
+<tr>
+<td><h4>Jobs Processing</h4></td>
+<td>{{num_jobs_processing}}</td>
+</tr>
+
+<tr>
+<td><h4>Jobs Pending</h4></td>
+<td>{{num_jobs_pending}}</td>
+</tr>
+
+<tr>
+<td><h4>Jobs Waiting</h4></td>
+<td>{{num_jobs_waiting}}</td>
+</tr>
+</table> 
+
+</td>
+<td>
+<h3><u>Outputs Summary</u></h3>
+<table border="1">
+<colgroup>
+   <col span="1"  style="width: 70%;">
+   <col  span="1" align="center" style="width: 30%;">
+</colgroup>
+
+<tr>
+<td><h4>Total Outputs Submitted</h4></td>
+<td>{{num_outputs}}</td>
+</tr>
+<tr>
+<td><h4>Outputs Finished</h4></td>
+<td>{{num_outputs_finished}}</td>
+</tr>
+
+<tr>
+<td><h4>Outputs Failed</h4></td>
+<td>{{num_outputs_failed}}</td>
+</tr>
+
+<tr>
+<td><h4>Outputs Processing</h4></td>
+<td>{{num_outputs_processing}}</td>
+</tr>
+
+<tr>
+<td><h4>Outputs Pending</h4></td>
+<td>{{num_outputs_pending}}</td>
+</tr>
+
+<tr>
+<td><h4>Outputs Waiting</h4></td>
+<td>{{num_outputs_waiting}}</td>
+</tr>
+</table> 
+
+</td>
+<td valign="top">
+<h3><u>Outputs Event Summary</u></h3>
+<table border="1">
+<colgroup>
+   <col span="1"  style="width: 70%;">
+   <col  span="1" align="center" style="width: 30%;">
+</colgroup>
+
+<tr>
+<td><h4>Total Outputs Submitted</h4></td>
+<td>{{num_outputs}}</td>
+</tr>
+<tr>
+<td><h4>Outputs Inspecting</h4></td>
+<td>{{num_outputs_inspecting}}</td>
+</tr>
+
+<tr>
+<td><h4>Outputs Downloading</h4></td>
+<td>{{num_outputs_downloading}}</td>
+</tr>
+
+<tr>
+<td><h4>Outputs Transcoding</h4></td>
+<td>{{num_outputs_transcoding}}</td>
+</tr>
+
+<tr>
+<td><h4>Outputs Uploading</h4></td>
+<td>{{num_outputs_uploading}}</td>
+</tr>
+</table> 
+
+</td>
+</tr>
+</table>
+{% endblock %}

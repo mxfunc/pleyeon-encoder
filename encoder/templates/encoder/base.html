@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}Pleyeon - Zencoder{% endblock %}</title>
+</head>
+
+<body>
+    <div id="header">
+        {% block header %}
+        <table border="0" width="100%">
+        <tr>
+        <td><a href="/zencoder/"><h3>Home</h3></a></td>
+        <td><a href="/zencoder/jobs"><h3>Jobs</h3></a></td>
+        <td><a href="/zencoder/encode"><h3>Add Encoding Job</h3></a></td>
+        </tr>
+        </table>
+        {% endblock %}
+    </div>
+
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
