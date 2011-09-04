@@ -28,7 +28,7 @@ def home(request):
     num_jobs_pending = ZencoderJob.objects.filter(status__iexact='pending').count()
     num_jobs_waiting = ZencoderJob.objects.filter(status__iexact='waiting').count()
 
-    num_outputs = ZencoderJObOutputOutput.objects.all().count()
+    num_outputs = ZencoderJObOutput.objects.all().count()
 
     num_outputs_finished = ZencoderJObOutput.objects.filter(status__iexact='finished').count()
     num_outputs_failed = ZencoderJObOutput.objects.filter(status__iexact='failed').count()
