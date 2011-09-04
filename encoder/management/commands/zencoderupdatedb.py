@@ -30,7 +30,7 @@ class Command(BaseCommand):
         for j in jobs:
             job_details = zen.job.details(j.id)
             if options["verbose"]:
-                os.self.write(str(j.zencoder_id)+"\t"+j.status+"\n")
+                self.stdout.write(str(j.zencoder_id)+"\t"+j.status+"\n")
             if job_details.code == 200:
                 j.status = job_details.body["job"]["state"]
                 j.save()
