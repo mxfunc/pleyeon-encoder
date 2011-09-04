@@ -26,12 +26,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options["verbose"]:
             self.stdout.write("Job ID - \t\t Status \n\n")
-        jobs = ZencoderJob.objects.all()
+        jobs = ZencoderJob.objects.exclude(status__in=self.job_not_in_progress)
         for j in jobs:
             print j.id
             job_details = zen.job.details(j.id)
             if options["verbose"]:
-                os.self.write("Job ID - "+str(j.zencoder_id)+"\t"+z.status+"\n")
+                os.self.write("Job ID - "+str(j.zencoder_id)+"\t"+j.status+"\n")
             if job_details.code == 200:
                 j.status = job_details.body["job"]["state"]
                 j.save()
