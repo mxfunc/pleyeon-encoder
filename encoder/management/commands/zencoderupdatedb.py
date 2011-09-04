@@ -48,5 +48,5 @@ class Command(BaseCommand):
                     pass
                 o.save()
             if options["verbose"]:
-                os.self.write(str(o.zencoder_id)+"\t"+o.status+"\n")
+                self.stdout.write(str(o.zencoder_id)+"\t"+o.status+"\n")
 
