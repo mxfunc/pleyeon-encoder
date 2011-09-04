@@ -25,26 +25,28 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options["verbose"]:
-            self.stdout.write("Job ID - \t\t Status \n\n")
+            self.stdout.write("Job ID - \t Status \n\n")
         jobs = ZencoderJob.objects.exclude(status__in=self.job_not_in_progress)
         for j in jobs:
-            print j.id
             job_details = zen.job.details(j.id)
             if options["verbose"]:
-                os.self.write("Job ID - "+str(j.zencoder_id)+"\t"+j.status+"\n")
+                os.self.write(str(j.zencoder_id)+"\t"+j.status+"\n")
             if job_details.code == 200:
                 j.status = job_details.body["job"]["state"]
                 j.save()
-                for o in j.outputs.all().exclude(status__in==self.output_not_in_progress):
-                    output_details = zen.output.progress(o.zencoder_id)
-                    if output_details.code == 200:
-                        o.status = output_details.body['state']
-                        try:
-                            o.current = output_details.body['current_event']
-                            o.progress = output_details.body['progress']
-                        except KeyError:
-                            pass
-                        o.save()
-                        if options["verbose"]:
-                            os.self.write("\tOutput ID - \t"+str(o.zencoder_id)+"\t"+o.status+"\n")
+
+        outputs = ZencoderOutputJobx.objects.exclude(status__in=self.output_not_in_progress)
+        for o in j.outputs:
+            self.stdout.write("\nOutput ID - \t Status \n\n")
+            output_details = zen.output.progress(o.zencoder_id)
+            if output_details.code == 200:
+                o.status = output_details.body['state']
+                try:
+                    o.current = output_details.body['current_event']
+                    o.progress = output_details.body['progress']
+                except KeyError:
+                    pass
+                o.save()
+            if options["verbose"]:
+                os.self.write(str(o.zencoder_id)+"\t"+o.status+"\n")
 
