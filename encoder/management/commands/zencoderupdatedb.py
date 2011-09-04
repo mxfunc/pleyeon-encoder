@@ -35,8 +35,8 @@ class Command(BaseCommand):
                 j.status = job_details.body["job"]["state"]
                 j.save()
 
-        outputs = ZencoderOutputJobx.objects.exclude(status__in=self.output_not_in_progress)
-        for o in j.outputs:
+        outputs = ZencoderJobOutput.objects.exclude(status__in=self.output_not_in_progress)
+        for o in outputs:
             self.stdout.write("\nOutput ID - \t Status \n\n")
             output_details = zen.output.progress(o.zencoder_id)
             if output_details.code == 200:
