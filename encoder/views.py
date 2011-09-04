@@ -28,13 +28,13 @@ def home(request):
     num_jobs_pending = ZencoderJob.objects.filter(status__iexact='pending').count()
     num_jobs_waiting = ZencoderJob.objects.filter(status__iexact='waiting').count()
 
-    num_outputs = ZencoderJobOutput.objects.all().count()
+    num_outputs = ZencoderJObOutputOutput.objects.all().count()
 
-    num_outputs_finished = ZencoderJob.objects.filter(status__iexact='finished').count()
-    num_outputs_failed = ZencoderJob.objects.filter(status__iexact='failed').count()
-    num_outputs_processing = ZencoderJob.objects.filter(status__iexact='processing').count()
-    num_outputs_pending = ZencoderJob.objects.filter(status__iexact='pending').count()
-    num_outputs_waiting = ZencoderJob.objects.filter(status__iexact='waiting').count()
+    num_outputs_finished = ZencoderJObOutput.objects.filter(status__iexact='finished').count()
+    num_outputs_failed = ZencoderJObOutput.objects.filter(status__iexact='failed').count()
+    num_outputs_processing = ZencoderJObOutput.objects.filter(status__iexact='processing').count()
+    num_outputs_pending = ZencoderJObOutput.objects.filter(status__iexact='pending').count()
+    num_outputs_waiting = ZencoderJObOutput.objects.filter(status__iexact='waiting').count()
 
 
     num_outputs_inspecting = ZencoderJobOutput.objects.filter(current__iexact='Inspecting').count()
