@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerEr
 from django.views.decorators.csrf import csrf_exempt
 
 from encoder.models import ZencoderJob, ZencoderJobOutput
-from encoder.utils import listdir, zen, signal_send
+from encoder.utils import listdir, zen
 from encoder.api import zencoder_submit
 
 def encode(request):
