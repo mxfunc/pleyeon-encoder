@@ -36,27 +36,38 @@ def listdir(d=HOME_DIR, abs_path=False, size=True):
             list_of_files.append(t)
     return list_of_files
 
-def zencoder_create_job(input_url):
-    input_url=DOWNLOAD_PREFIX+"singham.avi"
+def zencoder_add_job(file_path, input_url, upload_prefix, notify_url=None, video_profiles=None, thumbnail_profiles=None):
     print input_url
-    smartphone = {'base_url':UPLOAD_PREFIX} 
-    smartphone_advanced = {'base_url':UPLOAD_PREFIX}
-    notifications = {"notifications":ZENCODER_NOTIFY_URL}
-    
-    smartphone.update(UNIVERSAL_SMARTPHONE)
-    smartphone_advanced.update(ADVANCED_SMARTPHONE)
-    smartphone.update(notifications)
-    smartphone_advanced.update(notifications)
-    outputs = (smartphone, smartphone_advanced)
-    
-    return zen.job.create(input_url, outputs=outputs)
- 
+    if notify_url:
+        notifications = {"notifications":notify_url}
+    base_url = {'base_url':upload_prefix}
+
+    outputs = []
+    for profile in video_profiles:
+        profile.update(notify_url)
+        profile.update(base_url)
+        outputs.append(profile)
+
+    for profile in thumbnail_profiles:
+        profile.update(notify_url)
+        profile.update(base_url)
+        outputs.append({'thumbnails':profile})
+
+    job = zen.job.create(input_url, outputs=outputs)
+    zencoder_update_table(job, file_path)
+
+def zencoder_update_table(job, source_file_path):
+    o = ZencoderJob.objects.create(zencoder_id=job.body['id'], file=source_file_path)
+    for output in job.body['outputs']:
+        o.outputs.add(ZencoderJobOutput.objects.create(file=source_file_path, zencoder_id=output['id'], url=output['url'], label=output['label']))
+    o.save()
+
 def zencoder_submit(list_of_files):
     for file in list_of_files:
         abs_input_file_path = os.path.join(HOME_DIR, file)
         abs_output_file_path = os.path.join(ZENCODER_OUTPUT_DIR, file)
         job = zencoder_create_job(DOWNLOAD_PREFIX+urllib.quote(file))
-        print job.body
+        #print job.body
         if job.code == ZENCODER_JOB_OK:
             if os.path.isdir(ZENCODER_WORK_DIR):
                 dst_file = os.path.join(ZENCODER_WORK_DIR, file)

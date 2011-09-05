@@ -148,4 +148,7 @@ LOGGING = {
 ############ ENCODER SETTINGS ################
 ENCODER_DIRS = (
 )
-
+try:
+    from encoder.settings import *
+except:
+    pass
