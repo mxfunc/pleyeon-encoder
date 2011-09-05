@@ -6,15 +6,15 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerEr
 from django.views.decorators.csrf import csrf_exempt
 
 from encoder.models import ZencoderJob, ZencoderJobOutput
-from encoder.utils import listdir, zencoder_submit
-from encoder.utils import zen
+from encoder.utils import listdir, zen
+from encoder.api import zencoder_submit
 
 def encode(request):
     if request.method == 'GET':
         return render_to_response('encoder/encode.html', {'files':listdir()}, context_instance=RequestContext(request)) 
     else:
         files = request.REQUEST.getlist('files')
-        zencoder_submit(files)
+        zencoder_submit([k['abs_path'] for k in listdir()])
         return render_to_response('encoder/encode.html', {'files':listdir()}, context_instance=RequestContext(request))
 
 def job(request, job_id):

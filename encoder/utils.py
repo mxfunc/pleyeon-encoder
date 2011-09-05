@@ -6,9 +6,9 @@ import shutil
 from zencoder import Zencoder
 
 from encoder.models import ZencoderJob, ZencoderJobOutput 
-from encoder.settings import ZENCODER_OUTPUT_DIR, ZENCODER_WORK_DIR
+from encoder.settings import ZENCODER_WORK_DIR
 from encoder.settings import ZENCODER_API_KEY, ZENCODER_NOTIFY_URL
-from encoder.settings import DOWNLOAD_PREFIX, UPLOAD_PREFIX, FTP_DIR
+from encoder.settings import ZENCODER_DOWNLOAD_PREFIX, ZENCODER_UPLOAD_PREFIX, FTP_DIR
 from encoder.zencoder_profiles import *
 
 zen = Zencoder(ZENCODER_API_KEY)
@@ -36,6 +36,9 @@ def listdir(d=HOME_DIR, abs_path=False, size=True):
             list_of_files.append(t)
     return list_of_files
 
+class JobNotCreatedException(Exception):
+    pass
+
 def zencoder_add_job(file_path, input_url, upload_prefix, notify_url=None, video_profiles=None, thumbnail_profiles=None):
     print input_url
     if notify_url:
@@ -54,7 +57,10 @@ def zencoder_add_job(file_path, input_url, upload_prefix, notify_url=None, video
         outputs.append({'thumbnails':profile})
 
     job = zen.job.create(input_url, outputs=outputs)
-    zencoder_update_table(job, file_path)
+    if job.code == ZENCODER_JOB_OK:
+        zencoder_update_table(job, file_path)
+    else:
+        raise JobNotCreatedException("Zencoder job not created: response="+ job.code)
 
 def zencoder_update_table(job, source_file_path):
     o = ZencoderJob.objects.create(zencoder_id=job.body['id'], file=source_file_path)
@@ -62,25 +68,4 @@ def zencoder_update_table(job, source_file_path):
         o.outputs.add(ZencoderJobOutput.objects.create(file=source_file_path, zencoder_id=output['id'], url=output['url'], label=output['label']))
     o.save()
 
-def zencoder_submit(list_of_files):
-    for file in list_of_files:
-        abs_input_file_path = os.path.join(HOME_DIR, file)
-        abs_output_file_path = os.path.join(ZENCODER_OUTPUT_DIR, file)
-        job = zencoder_create_job(DOWNLOAD_PREFIX+urllib.quote(file))
-        #print job.body
-        if job.code == ZENCODER_JOB_OK:
-            if os.path.isdir(ZENCODER_WORK_DIR):
-                dst_file = os.path.join(ZENCODER_WORK_DIR, file)
-                if os.path.exists(dst_file):
-                    os.remove(dst_file)
-                moved = False
-                shutil.move(abs_input_file_path, ZENCODER_WORK_DIR)
-                moved = True
-                try:
-                    o = ZencoderJob.objects.create(zencoder_id=job.body['id'], file=abs_output_file_path)
-                    for output in job.body['outputs']:
-                        o.outputs.add(ZencoderJobOutput.objects.create(file=abs_input_file_path, zencoder_id=output['id'], url=output['url'], label=output['label']))
-                except:
-                    if moved:
-                        shutil.move(dst_file, HOME_DIR)
-                    raise
+
