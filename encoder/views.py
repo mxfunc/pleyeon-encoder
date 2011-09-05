@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerEr
 from django.views.decorators.csrf import csrf_exempt
 
 from encoder.models import ZencoderJob, ZencoderJobOutput
-from encoder.utils import listdir, zen
+from encoder.utils import listdir, zen, signal_send
 from encoder.api import zencoder_submit
 
 def encode(request):
@@ -60,11 +60,11 @@ def notify(request):
             output = o.outputs.filter(zencoder_id=output_id)
             output.state=resp['job']['output']['state']
             output.save()
+    ####### ADD CODE TO CREATE MODEL IF STATUS == FINISHED########
+        o.send_signal_encoded()
     except:
         return HttpResponseServerError("I don't have that here, honey\n")
-    ####### ADD CODE TO CREATE MODEL IF STATUS == FINISHED########
-    
-    return HttpResponse(job_id + " updated successfully", status=201)
+    return HttpResponse(str(job_id) + " updated successfully", status=201)
 
 def jobs(request):
     sort = request.REQUEST.get('sort', 'date') 

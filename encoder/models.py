@@ -1,5 +1,5 @@
 from django.db import models
-from encoder.settings import FTP_DIR, ZENCODER_OUTPUT_DIR
+from encoder.signals import file_encoded
 
 class ZencoderJob(models.Model):
     zencoder_id = models.PositiveIntegerField()
@@ -9,6 +9,12 @@ class ZencoderJob(models.Model):
     status = models.CharField(max_length=20, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=100, null=True)
+
+    def send_signal_encoded(self):
+        outs = []
+        for o in self.outputs:
+            o.append(o.label, o.file)
+        file_encoded.send(sender=self, source_file=file, outputs=outs, thumbnails=None)
 
 class ZencoderJobOutput(models.Model):
     url = models.CharField(max_length=1000)

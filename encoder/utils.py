@@ -25,14 +25,14 @@ ZENCODER_JOB_OK = 201
 def is_being_written(f):
     return abs(time.mktime(datetime.datetime.now().timetuple())-os.stat(f).st_mtime) < 10
 
-def listdir(d=HOME_DIR, abs_path=False, size=True):
+def listdir(d=HOME_DIR, size=True):
     list_of_files = []
     for f in os.listdir(HOME_DIR):
         abs_f = os.path.join(HOME_DIR, f)
         if not os.path.isdir(f) and not is_being_written(abs_f):
-            f = abs_f if abs_path else f
             size_m = float(os.path.getsize(abs_f))/1000000.0
             t = {'file':f, 'size':size_m} if size else f
+	    t.update({'abs_path':abs_f})
             list_of_files.append(t)
     return list_of_files
 
@@ -47,20 +47,21 @@ def zencoder_add_job(file_path, input_url, upload_prefix, notify_url=None, video
 
     outputs = []
     for profile in video_profiles:
-        profile.update(notify_url)
+        profile.update(notifications)
         profile.update(base_url)
         outputs.append(profile)
 
     for profile in thumbnail_profiles:
-        profile.update(notify_url)
+	#profile.update({label:"thumbails"})
         profile.update(base_url)
-        outputs.append({'thumbnails':profile})
+        outputs[0].update({'thumbnails':profile})
 
     job = zen.job.create(input_url, outputs=outputs)
+    print job.body
     if job.code == ZENCODER_JOB_OK:
         zencoder_update_table(job, file_path)
     else:
-        raise JobNotCreatedException("Zencoder job not created: response="+ job.code)
+        raise JobNotCreatedException("Zencoder job not created: response="+ str(job.body))
 
 def zencoder_update_table(job, source_file_path):
     o = ZencoderJob.objects.create(zencoder_id=job.body['id'], file=source_file_path)
