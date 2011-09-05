@@ -63,6 +63,7 @@ def notify(request):
     ####### ADD CODE TO CREATE MODEL IF STATUS == FINISHED########
         o.send_signal_encoded()
     except:
+        raise
         return HttpResponseServerError("I don't have that here, honey\n")
     return HttpResponse(str(job_id) + " updated successfully", status=201)
 
