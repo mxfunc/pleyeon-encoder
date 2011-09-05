@@ -13,7 +13,7 @@ class ZencoderJob(models.Model):
     def send_signal_encoded(self):
         outs = []
         for o in self.outputs.all():
-            o.append((o.label, o.file))
+            outs.append((o.label, o.file))
         file_encoded.send(sender=self, source_file=file, outputs=outs, thumbnails=None)
 
 class ZencoderJobOutput(models.Model):
