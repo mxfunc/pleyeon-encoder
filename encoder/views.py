@@ -102,8 +102,9 @@ def jobs(request):
     start = per_page*(page-1)
     end = per_page*page
     list_o = []
+ 
     for o in qs[start:end]:
-        if zencoder_get:
+        if zencoder_get and not job.done():
             o.update_via_encoder(zen)
         list_o.append(o)
 

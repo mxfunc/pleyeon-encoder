@@ -6,7 +6,7 @@ class ZencoderJobManager(models.Manager):
         return self.exclude(status__in=self.model.job_not_in_progress)
 
 class ZencoderJob(models.Model):
-    objects = ZencoderJobManager()
+    jobs_in_progress = ZencoderJobManager()
 
     zencoder_id = models.PositiveIntegerField()
     url = models.CharField(max_length=1000)
@@ -20,7 +20,7 @@ class ZencoderJob(models.Model):
     job_not_in_progress = ["finished", "cancelled", "failed"]
     
     def update_via_zencoder(self, zen):
-        if self.status.lower() in job_not_in_progress:
+        if self.status.lower() in self.job_not_in_progress:
             return
         job_details = zen.job.details(self.zencoder_id)
         if job_details.code == 200:
@@ -28,6 +28,9 @@ class ZencoderJob(models.Model):
             self.save()
         for output in outputs.all():
             output.update_via_zencoder(zen)
+
+    def done(self):
+        return not self.status in self.job_not_in_progress
 
     def send_signal_encoded(self):
         outs = []
@@ -48,7 +51,7 @@ class ZencoderJobOutput(models.Model):
     output_not_in_progress = ["finished", "cancelled", "failed", "no input"]
 
     def update_via_zencoder(self, zen):
-        if self.status.lower() in output_not_in_progress:
+        if self.status.lower() in self.output_not_in_progress:
             return
         output_details = zen.output.progress(self.zencoder_id)
         if output_details.code == 200:
@@ -59,4 +62,7 @@ class ZencoderJobOutput(models.Model):
             except KeyError:
                 pass
             self.save()
+
+    def done(self):
+        return self.status in self.output_not_in_progress
 
