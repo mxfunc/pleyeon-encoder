@@ -20,14 +20,11 @@ class ZencoderJob(models.Model):
     status_done = ["finished", "cancelled", "failed"]
     
     def update_via_zencoder(self, zen):
-        if self.done():
-            return
-        job_details = zen.job.details(self.zencoder_id)
-        if job_details.code == 200:
-            self.status = job_details.body["job"]["status"]
-            self.save()
-        for output in outputs.all():
-            output.update_via_zencoder(zen)
+        if not self.done():
+            job_details = zen.job.details(self.zencoder_id)
+            if job_details.code == 200:
+                self.status = job_details.body["job"]["status"]
+                self.save()
 
     def done(self):
         return self.status.lower() in self.status_done
