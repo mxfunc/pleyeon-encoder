@@ -105,7 +105,7 @@ def jobs(request):
  
     for o in qs[start:end]:
         if zencoder_get and not o.done():
-            o.update_via_encoder(zen)
+            o.update_via_zencoder(zen)
         list_o.append(o)
 
     return render_to_response('encoder/jobs.html', {'jobs':list_o})
