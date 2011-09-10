@@ -19,7 +19,7 @@ def zencoder_submit_sync(file_path, thumbnails=True):
             raise ValueError("ENCODER_WORK_DIR is not a directory")
 
         input_url_prefix = settings.ZENCODER_DOWNLOAD_PREFIX
-        input_url = input_url_prefix + input_path if input_url_prefix.endswith('/') else input_url_prefix + '/' + file_name 
+        input_url = input_url_prefix + file_name if input_url_prefix.endswith('/') else input_url_prefix + '/' + file_name 
         zencoder_add_job(file_path, input_url, upload_prefix, notify_url, video_profiles, thumbnail_profiles)
     else:
         raise ValueError("file_path does not exist or is not a file")
