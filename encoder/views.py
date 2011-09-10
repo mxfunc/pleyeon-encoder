@@ -104,7 +104,7 @@ def jobs(request):
     list_o = []
  
     for o in qs[start:end]:
-        if zencoder_get and not job.done():
+        if zencoder_get and not o.done():
             o.update_via_encoder(zen)
         list_o.append(o)
 
