@@ -12,11 +12,11 @@ class ZencoderJob(models.Model):
     url = models.CharField(max_length=1000)
     file = models.CharField(max_length=1000)
     outputs = models.ManyToManyField('ZencoderJobOutput')
-    status = models.CharField(max_length=20, null=True, blank=True)
+    status = models.CharField(max_length=20, null=True, blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=100, null=True)
     
-    status_in_progress = [None, "pending", "waiting", "processing"]
+    status_in_progress = ['', "pending", "waiting", "processing"]
     status_done = ["finished", "cancelled", "failed"]
     
     def update_via_zencoder(self, zen):
@@ -25,7 +25,7 @@ class ZencoderJob(models.Model):
             if job_details.code == 200:
                 self.status = job_details.body["job"]["status"]
                 self.save()
-        for output in outputs.all():
+        for output in self.outputs.all():
             output.update_via_zencoder(zen)
 
     def done(self):
@@ -43,10 +43,10 @@ class ZencoderJobOutput(models.Model):
     file = models.CharField(max_length=1000)
     zencoder_id = models.PositiveIntegerField() 
     progress = models.CharField(max_length=20)
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, default='', null=True, blank=True)
     current = models.CharField(max_length=20)
 
-    status_in_progress = [None, "waiting", "queued", "assigning", "processing"]
+    status_in_progress = ['', "waiting", "queued", "assigning", "processing"]
     status_done = ["finished", "cancelled", "failed", "no input"]
 
     def update_via_zencoder(self, zen):
@@ -63,5 +63,5 @@ class ZencoderJobOutput(models.Model):
             self.save()
 
     def done(self):
-        return self.status in self.status_done
+        return self.status.lower() in self.status_done
 
