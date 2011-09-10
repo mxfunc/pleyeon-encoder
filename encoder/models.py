@@ -23,7 +23,7 @@ class ZencoderJob(models.Model):
         if not self.done():
             job_details = zen.job.details(self.zencoder_id)
             if job_details.code == 200:
-                self.status = job_details.body["job"]["status"]
+                self.status = job_details.body["job"]["state"]
                 self.save()
         for output in self.outputs.all():
             output.update_via_zencoder(zen)
