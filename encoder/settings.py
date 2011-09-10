@@ -44,7 +44,7 @@ ZENCODER_THUMBNAIL_PROFILES = (
 ENCODER_DIR = (
 )
 try:
-    from setting_local import *
+    from settings_local import *
 except:
     pass
 
