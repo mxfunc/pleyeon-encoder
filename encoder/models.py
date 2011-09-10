@@ -59,3 +59,4 @@ class ZencoderJobOutput(models.Model):
             except KeyError:
                 pass
             self.save()
+
