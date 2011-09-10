@@ -22,11 +22,11 @@ MEDIA_FILES_SUFFIXES = [
 ZENCODER_JOB_OK = 201
 
 def now_uts():
-    return time.mktime(datetime.datetime.now())
+    return time.mktime(datetime.datetime.now().timetuple())
 
 #### A HACK #########
 def is_being_written(f):
-    return abs(time.mktime(now_uts())-os.stat(f).st_mtime) < 10
+    return abs(now_uts()-os.stat(f).st_mtime) < 10
 
 def listdir(d=HOME_DIR, size=True):
     list_of_files = []
@@ -64,7 +64,7 @@ def zencoder_add_job(file_path, input_url, upload_prefix, notify_url=None, video
     if notify_url:
         notifications = {"notifications":notify_url}
     base_url = {'base_url':upload_prefix}
-    file_prefix = sha256_digest(file_path)[:32]+'_'+now_uts() 
+    file_prefix = sha256_digest(file_path)[:32]+'_'+int(now_uts()) 
 
     outputs = []
     for profile in video_profiles:
