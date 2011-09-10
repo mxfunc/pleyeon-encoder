@@ -25,6 +25,8 @@ class ZencoderJob(models.Model):
             if job_details.code == 200:
                 self.status = job_details.body["job"]["status"]
                 self.save()
+        for output in outputs.all():
+            output.update_via_zencoder(zen)
 
     def done(self):
         return self.status.lower() in self.status_done
