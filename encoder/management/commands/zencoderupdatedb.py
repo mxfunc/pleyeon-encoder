@@ -16,38 +16,20 @@ class Command(BaseCommand):
             help="print job ids updated"),
         )
      
-    job_in_progress = ["pending", "waiting", "processing"]
-    output_in_progress = ["waiting", "queued", "assigning", "processing"]
-
-    job_not_in_progress = ["finished", "cancelled", "failed"]
-    output_not_in_progress = ["finished", "cancelled", "failed", "no input"]
-    #job_not_in_progress = ["processing"]
-
     def handle(self, *args, **options):
         if options["verbose"]:
             self.stdout.write("Job ID - \t Status \n\n")
-        jobs = ZencoderJob.objects.exclude(status__in=self.job_not_in_progress)
+        jobs = ZencoderJob.objects.get_jobs_in_progress()
         for j in jobs:
-            job_details = zen.job.details(j.id)
+            j.update_via_zencoder(zen)
             if options["verbose"]:
                 self.stdout.write(str(j.zencoder_id)+"\t"+j.status+"\n")
-            if job_details.code == 200:
-                j.status = job_details.body["job"]["state"]
-                j.save()
-
+        """ 
         outputs = ZencoderJobOutput.objects.exclude(status__in=self.output_not_in_progress)
         if options["verbose"]:
             self.stdout.write("\nOutput ID - \t Status \n\n")
         for o in outputs:
-            output_details = zen.output.progress(o.zencoder_id)
-            if output_details.code == 200:
-                o.status = output_details.body['state']
-                try:
-                    o.current = output_details.body['current_event']
-                    o.progress = output_details.body['progress']
-                except KeyError:
-                    pass
-                o.save()
+            o.update_via_zencoder(zen)
             if options["verbose"]:
                 self.stdout.write(str(o.zencoder_id)+"\t"+o.status+"\n")
-
+        """

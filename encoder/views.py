@@ -14,8 +14,9 @@ def encode(request):
         return render_to_response('encoder/encode.html', {'files':listdir()}, context_instance=RequestContext(request)) 
     else:
         files = request.REQUEST.getlist('files')
-        zencoder_submit([k['abs_path'] for k in listdir()])
-        return render_to_response('encoder/encode.html', {'files':listdir()}, context_instance=RequestContext(request))
+	if len(files) <= 1:
+        	zencoder_submit(files)
+        return render_to_response('encoder/encode.html', {'files':listdir(), 'num':len(files)}, context_instance=RequestContext(request))
 
 def job(request, job_id):
     pass
@@ -103,20 +104,7 @@ def jobs(request):
     list_o = []
     for o in qs[start:end]:
         if zencoder_get:
-            job_details = zen.job.details(o.zencoder_id)
-            if job_details.code == 200:
-                o.status = job_details.body["job"]["state"]
-                o.save()
-                for output in o.outputs.all():
-                    output_details = zen.output.progress(output.zencoder_id)
-                    if output_details.code == 200:
-                        output.status = output_details.body['state']
-                        try:
-                            output.current = output_details.body['current_event']
-                            output.progress = output_details.body['progress']
-                        except KeyError:
-                            pass
-                        output.save()
+            o.update_via_encoder(zen)
         list_o.append(o)
 
     return render_to_response('encoder/jobs.html', {'jobs':list_o})
