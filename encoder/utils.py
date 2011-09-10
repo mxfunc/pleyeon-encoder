@@ -76,6 +76,8 @@ def zencoder_add_job(file_path, input_url, upload_prefix, notify_url=None, video
 
     for profile in thumbnail_profiles:
 	#profile.update({label:"thumbails"})
+        profile.pop('filename')
+        profile['prefix'] = file_prefix+profile['label']
         profile.update(base_url)
         outputs[0].update({'thumbnails':profile})
 
@@ -89,6 +91,9 @@ def zencoder_add_job(file_path, input_url, upload_prefix, notify_url=None, video
 def zencoder_update_table(job, source_file_path):
     o = ZencoderJob.objects.create(zencoder_id=job.body['id'], file=source_file_path)
     for output in job.body['outputs']:
+        filename = output['url'].split('/',1)[1]
+        o.outputs.add(ZencoderJobOutput.objects.create(file=filename, zencoder_id=output['id'], url=output['url'], label=output['label']))
+    for output in job.body['thumbnails']:
         filename = output['url'].split('/',1)[1]
         o.outputs.add(ZencoderJobOutput.objects.create(file=filename, zencoder_id=output['id'], url=output['url'], label=output['label']))
     o.save()
