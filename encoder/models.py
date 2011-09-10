@@ -16,11 +16,11 @@ class ZencoderJob(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=100, null=True)
     
-    job_in_progress = ["pending", "waiting", "processing"]
-    job_not_in_progress = ["finished", "cancelled", "failed"]
+    status_in_progress = [None, "pending", "waiting", "processing"]
+    status_done = ["finished", "cancelled", "failed"]
     
     def update_via_zencoder(self, zen):
-        if self.status.lower() in self.job_not_in_progress:
+        if self.done():
             return
         job_details = zen.job.details(self.zencoder_id)
         if job_details.code == 200:
@@ -30,7 +30,7 @@ class ZencoderJob(models.Model):
             output.update_via_zencoder(zen)
 
     def done(self):
-        return not self.status in self.job_not_in_progress
+        return self.status.lower() in self.status_done
 
     def send_signal_encoded(self):
         outs = []
@@ -47,11 +47,11 @@ class ZencoderJobOutput(models.Model):
     status = models.CharField(max_length=20)
     current = models.CharField(max_length=20)
 
-    output_in_progress = ["waiting", "queued", "assigning", "processing"]
-    output_not_in_progress = ["finished", "cancelled", "failed", "no input"]
+    status_in_progress = [None, "waiting", "queued", "assigning", "processing"]
+    status_done = ["finished", "cancelled", "failed", "no input"]
 
     def update_via_zencoder(self, zen):
-        if self.status.lower() in self.output_not_in_progress:
+        if self.done():    
             return
         output_details = zen.output.progress(self.zencoder_id)
         if output_details.code == 200:
@@ -64,5 +64,5 @@ class ZencoderJobOutput(models.Model):
             self.save()
 
     def done(self):
-        return self.status in self.output_not_in_progress
+        return self.status in self.status_done
 
