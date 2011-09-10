@@ -6,7 +6,7 @@ class ZencoderJobManager(models.Manager):
         return self.exclude(status__in=self.model.job_not_in_progress)
 
 class ZencoderJob(models.Model):
-    jobs_in_progress = ZencoderJobManager()
+    objects = ZencoderJobManager()
 
     zencoder_id = models.PositiveIntegerField()
     url = models.CharField(max_length=1000)
