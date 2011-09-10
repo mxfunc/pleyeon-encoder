@@ -64,7 +64,7 @@ def zencoder_add_job(file_path, input_url, upload_prefix, notify_url=None, video
     if notify_url:
         notifications = {"notifications":notify_url}
     base_url = {'base_url':upload_prefix}
-    file_prefix = sha256_digest(file_path)[:32]+'_'+int(now_uts()) 
+    file_prefix = sha256_digest(file_path)[:32]+'_'+str(int(now_uts())) 
 
     outputs = []
     for profile in video_profiles:
